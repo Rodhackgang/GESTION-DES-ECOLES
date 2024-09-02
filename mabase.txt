@@ -1,0 +1,168 @@
+-- Création de la base de données
+CREATE DATABASE IF NOT EXISTS gestion_ecole;
+USE gestion_ecole;
+
+-- Table pour la gestion des élèves
+CREATE TABLE IF NOT EXISTS eleves (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    date_naissance DATE,
+    adresse VARCHAR(255),
+    telephone VARCHAR(20),
+    email VARCHAR(100),
+    date_inscription DATE NOT NULL
+);
+
+-- Table pour la gestion des staffs
+CREATE TABLE IF NOT EXISTS staffs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    role ENUM('Enseignant', 'Censeur', 'Surveillant', 'Superviseur') NOT NULL,
+    telephone VARCHAR(20),
+    email VARCHAR(100),
+    date_embauche DATE NOT NULL
+);
+
+-- Table pour la gestion des matières
+CREATE TABLE IF NOT EXISTS matieres (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- Table pour la gestion des salles de classe
+CREATE TABLE IF NOT EXISTS salles_classe (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    capacite INT
+);
+ALTER TABLE salles_classe
+ADD COLUMN prof_principal VARCHAR(100);
+
+ALTER TABLE staffs ADD COLUMN classe_id INT NULL;
+ALTER TABLE staffs ADD FOREIGN KEY (classe_id) REFERENCES salles_classe(id);
+
+ALTER TABLE evaluations ADD COLUMN classe_id INT NULL;
+ALTER TABLE evaluations ADD FOREIGN KEY (classe_id) REFERENCES salles_classe(id)
+
+ALTER TABLE matieres ADD COLUMN classe_id INT NULL;
+ALTER TABLE matieres ADD FOREIGN KEY (classe_id) REFERENCES salles_classe(id)
+
+ALTER TABLE notes ADD COLUMN classe_id INT NULL;
+ALTER TABLE notes ADD FOREIGN KEY (classe_id) REFERENCES salles_classe(id)
+
+ALTER TABLE matieres ADD COLUMN enseignant_id INT NULL;
+
+ALTER TABLE matieres ADD FOREIGN KEY (enseignant_id) REFERENCES staffs(id);
+
+
+-- Table pour la gestion des notes
+CREATE TABLE IF NOT EXISTS notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eleve_id INT,
+    matiere_id INT,
+    note DECIMAL(5, 2) NOT NULL,
+    date_evaluation DATE NOT NULL,
+    commentaire TEXT,
+    FOREIGN KEY (eleve_id) REFERENCES eleves(id),
+    FOREIGN KEY (matiere_id) REFERENCES matieres(id)
+);
+
+-- Table pour la gestion des emplois du temps
+CREATE TABLE IF NOT EXISTS emplois_temps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    classe_id INT,
+    matiere_id INT,
+    staff_id INT,
+    jour ENUM('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'),
+    heure_debut TIME,
+    heure_fin TIME,
+    FOREIGN KEY (classe_id) REFERENCES salles_classe(id),
+    FOREIGN KEY (matiere_id) REFERENCES matieres(id),
+    FOREIGN KEY (staff_id) REFERENCES staffs(id)
+);
+
+-- Table pour les notifications (système de messagerie)
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    expéditeur_id INT,
+    destinataire_id INT,
+    message TEXT NOT NULL,
+    date_envoi DATETIME NOT NULL,
+    FOREIGN KEY (expéditeur_id) REFERENCES staffs(id),
+    FOREIGN KEY (destinataire_id) REFERENCES staffs(id)
+);
+
+-- Table pour la gestion des évaluations
+CREATE TABLE IF NOT EXISTS evaluations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    matiere_id INT,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT,
+    date_evaluation DATE NOT NULL,
+    FOREIGN KEY (matiere_id) REFERENCES matieres(id)
+);
+
+-- Table pour le suivi des absences
+CREATE TABLE IF NOT EXISTS absences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eleve_id INT,
+    date_absence DATE NOT NULL,
+    motif TEXT,
+    FOREIGN KEY (eleve_id) REFERENCES eleves(id)
+);
+
+-- Table pour la gestion des bulletins de note
+CREATE TABLE IF NOT EXISTS bulletins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    eleve_id INT,
+    semestre ENUM('Semestre 1', 'Semestre 2'),
+    annee_scolaire VARCHAR(9) NOT NULL,
+    commentaires TEXT,
+    FOREIGN KEY (eleve_id) REFERENCES eleves(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS utilisateurs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom_utilisateur VARCHAR(100) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('Eleve', 'Staff', 'Admin') NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE messages
+ADD COLUMN type_expediteur ENUM('Eleve', 'Staff', 'Admin') NOT NULL DEFAULT 'Eleve';
+
+
+CREATE TABLE IF NOT EXISTS annees_scolaires (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    annee_debut YEAR NOT NULL,
+    annee_fin YEAR NOT NULL
+);
+
+ALTER TABLE bulletins
+ADD COLUMN annee_scolaire_id INT,
+ADD FOREIGN KEY (annee_scolaire_id) REFERENCES annees_scolaires(id);
+
+ALTER TABLE eleves
+ADD COLUMN annee_scolaire_id INT,
+ADD FOREIGN KEY (annee_scolaire_id) REFERENCES annees_scolaires(id);
+
+ALTER TABLE eleves
+ADD COLUMN classe_id INT,
+ADD FOREIGN KEY (classe_id) REFERENCES salles_classe(id);
+
+
+ALTER TABLE evaluations
+ADD COLUMN annee_scolaire_id INT,
+ADD FOREIGN KEY (annee_scolaire_id) REFERENCES annees_scolaires(id);
+
+
+ALTER TABLE absences
+ADD COLUMN annee_scolaire_id INT,
+ADD FOREIGN KEY (annee_scolaire_id) REFERENCES annees_scolaires(id);
+

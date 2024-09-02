@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation de Gestion Ecole</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+        .slide {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+        }
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+        .content img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        h2 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<section id="introduction" class="slide active">
+    <div class="content">
+        <h2>Bienvenue à notre présentation</h2>
+        <p>Nous sommes heureux de vous présenter notre projet de gestion d'école, conçu pour améliorer l'efficacité et la gestion des ressources éducatives.</p>
+        <img src="https://source.unsplash.com/random/800x400?school" alt="Image aléatoire">
+    </div>
+</section>
+
+<section id="presentation" class="slide">
+    <div class="content">
+        <h2>Gestion Ecole</h2>
+        <p>Notre entreprise vise à optimiser la gestion des élèves, du personnel et des ressources éducatives. Nous cherchons à améliorer la communication interne et à réduire les tâches administratives.</p>
+        <p>Nos objectifs incluent l'efficacité opérationnelle et la transparence dans la gestion quotidienne de l'établissement.</p>
+        <img src="https://source.unsplash.com/random/800x400?education" alt="Image aléatoire">
+    </div>
+</section>
+
+<section id="etude-existant" class="slide">
+    <div class="content">
+        <h2>Étude de l'existant</h2>
+        <p>Actuellement, la gestion des emplois du temps, le suivi des absences et la communication interne sont effectués manuellement.</p>
+        <p>Cela entraîne des inefficacités et des défis dans la prise de décisions rapides et pertinentes pour le bon fonctionnement de l'école.</p>
+        <img src="https://source.unsplash.com/random/800x400?manual" alt="Image aléatoire">
+    </div>
+</section>
+
+<section id="analyse-besoins" class="slide">
+    <div class="content">
+        <h2>Analyse et besoins</h2>
+        <p>Pour répondre à ces défis, nous avons conçu une base de données robuste incluant des entités telles que les élèves, le personnel, les matières et les salles de classe.</p>
+        <p>Nos besoins incluent une gestion automatisée des emplois du temps, un suivi des absences en temps réel et une communication efficace via un système de notifications intégré.</p>
+        <img src="https://source.unsplash.com/random/800x400?database" alt="Image aléatoire">
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+
+        showSlide(currentSlide);
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000); // Change slide every 5 seconds
+    });
+</script>
+
+</body>
+</html>
+
